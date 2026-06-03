@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Tomas — Aissa</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #F5F5F7;
+    color: #1C1C1E;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  header {
+    background: #fff;
+    border-bottom: 1px solid #E5E5EA;
+    padding: 16px 20px 12px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  header h1 { font-size: 17px; font-weight: 600; color: #1C1C1E; }
+  header p  { font-size: 12px; color: #8E8E93; margin-top: 2px; }
+
+  .container { padding: 16px; max-width: 480px; margin: 0 auto; }
+
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  .card-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #8E8E93;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+
+  /* QUIEN */
+  .who-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .who-btn {
+    padding: 14px 10px;
+    border-radius: 12px;
+    border: 2px solid #E5E5EA;
+    background: #F5F5F7;
+    font-size: 15px;
+    font-weight: 500;
+    color: #3C3C43;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .who-btn .avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700;
+    margin: 0 auto 6px;
+  }
+  .who-btn.bryan { border-color: #007AFF; background: #EAF2FF; color: #007AFF; }
+  .who-btn.bryan .avatar { background: #007AFF; color: #fff; }
+  .who-btn.lucia { border-color: #FF2D55; background: #FFF0F3; color: #FF2D55; }
+  .who-btn.lucia .avatar { background: #FF2D55; color: #fff; }
+
+  /* HORA ESPERADA */
+  .toma-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .toma-pill {
+    padding: 10px 4px;
+    border-radius: 10px;
+    border: 2px solid #E5E5EA;
+    background: #F5F5F7;
+    font-size: 14px;
+    font-weight: 500;
+    color: #3C3C43;
+    text-align: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.15s;
+  }
+  .toma-pill.selected { border-color: #34C759; background: #F0FBF3; color: #1E7A3A; font-weight: 700; }
+
+  /* INPUTS */
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { display: block; font-size: 13px; color: #8E8E93; margin-bottom: 6px; }
+  .field input, .field textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #E5E5EA;
+    background: #F5F5F7;
+    font-size: 16px;
+    color: #1C1C1E;
+    font-family: inherit;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .field input:focus, .field textarea:focus {
+    border-color: #007AFF;
+    background: #fff;
+  }
+  .field textarea { resize: none; height: 72px; }
+
+  .oz-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .oz-box { text-align: center; }
+  .oz-box label { display: block; font-size: 12px; color: #8E8E93; margin-bottom: 6px; }
+  .oz-controls { display: flex; align-items: center; gap: 0; border: 1.5px solid #E5E5EA; border-radius: 10px; overflow: hidden; background: #F5F5F7; }
+  .oz-btn {
+    width: 42px; height: 46px;
+    background: none; border: none;
+    font-size: 22px; font-weight: 300;
+    color: #007AFF; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .oz-btn:active { background: #E5E5EA; }
+  .oz-val {
+    flex: 1; text-align: center;
+    font-size: 17px; font-weight: 600;
+    color: #1C1C1E;
+  }
+
+  /* SUBMIT */
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    background: #007AFF;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .submit-btn:active { opacity: 0.85; transform: scale(0.98); }
+  .submit-btn:disabled { background: #C7C7CC; cursor: not-allowed; transform: none; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1C1C1E;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s;
+    white-space: nowrap;
+    z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.error { background: #FF3B30; }
+
+  /* HISTORIAL */
+  .history-title {
+    font-size: 13px; font-weight: 600; color: #8E8E93;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin: 20px 0 10px;
+  }
+  .history-item {
+    background: #fff;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .history-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; flex-shrink: 0;
+    color: #fff;
+  }
+  .history-info { flex: 1; min-width: 0; }
+  .history-hora { font-size: 13px; font-weight: 600; color: #1C1C1E; }
+  .history-detail { font-size: 12px; color: #8E8E93; margin-top: 2px; }
+  .history-quien { font-size: 12px; font-weight: 500; margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🍼 Tomas de Aissa</h1>
+  <p id="fecha-header">cargando fecha...</p>
+</header>
+
+<div class="container">
+
+  <!-- QUIEN -->
+  <div class="card">
+    <div class="card-title">¿Quién está dando la toma?</div>
+    <div class="who-grid">
+      <button class="who-btn" id="btn-bryan" onclick="selectWho('Bryan')">
+        <div class="avatar">BR</div>
+        Bryan
+      </button>
+      <button class="who-btn" id="btn-lucia" onclick="selectWho('Lucía')">
+        <div class="avatar">LU</div>
+        Lucía
+      </button>
+    </div>
+  </div>
+
+  <!-- HORA ESPERADA -->
+  <div class="card">
+    <div class="card-title">Hora esperada de la toma</div>
+    <div class="toma-grid" id="toma-grid">
+      <button class="toma-pill" onclick="selectToma(this, '06:00')">06:00</button>
+      <button class="toma-pill" onclick="selectToma(this, '09:00')">09:00</button>
+      <button class="toma-pill" onclick="selectToma(this, '12:00')">12:00</button>
+      <button class="toma-pill" onclick="selectToma(this, '15:00')">15:00</button>
+      <button class="toma-pill" onclick="selectToma(this, '18:00')">18:00</button>
+      <button class="toma-pill" onclick="selectToma(this, '21:00')">21:00</button>
+      <button class="toma-pill" onclick="selectToma(this, '00:00')">00:00</button>
+      <button class="toma-pill" onclick="selectToma(this, '03:00')">03:00</button>
+    </div>
+  </div>
+
+  <!-- HORA REAL -->
+  <div class="card">
+    <div class="card-title">Hora real de la toma</div>
+    <div class="field">
+      <input type="time" id="hora-real" />
+    </div>
+  </div>
+
+  <!-- OZ -->
+  <div class="card">
+    <div class="card-title">Cantidad</div>
+    <div class="oz-row">
+      <div class="oz-box">
+        <label>Leche materna (oz)</label>
+        <div class="oz-controls">
+          <button class="oz-btn" onclick="changeOz('materna', -0.5)">−</button>
+          <div class="oz-val" id="val-materna">0</div>
+          <button class="oz-btn" onclick="changeOz('materna', 0.5)">+</button>
+        </div>
+      </div>
+      <div class="oz-box">
+        <label>Fórmula (oz)</label>
+        <div class="oz-controls">
+          <button class="oz-btn" onclick="changeOz('formula', -0.5)">−</button>
+          <div class="oz-val" id="val-formula">0</div>
+          <button class="oz-btn" onclick="changeOz('formula', 0.5)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTAS -->
+  <div class="card">
+    <div class="card-title">Notas (opcional)</div>
+    <div class="field">
+      <textarea id="notas" placeholder="Ej: estuvo inquieta, durmió bien después, regurgitó un poco..."></textarea>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <button class="submit-btn" id="submit-btn" onclick="guardarToma()">
+    Guardar toma
+  </button>
+
+  <!-- HISTORIAL HOY -->
+  <div class="history-title">Tomas registradas hoy</div>
+  <div id="historial"></div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyteL0Ob16_I-8U29vJTDKmEPUVHBczOJKyFJ9zGXjMudZxH04fVqOiZthphk19mkDVhA/exec";
+
+let quien = "";
+let tomaEsperada = "";
+let materna = 0;
+let formula = 0;
+let historial = [];
+
+function init() {
+  const now = new Date();
+  const dias = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+  const meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  document.getElementById("fecha-header").textContent =
+    dias[now.getDay()] + ", " + now.getDate() + " de " + meses[now.getMonth()];
+
+  const h = String(now.getHours()).padStart(2,"0");
+  const m = String(now.getMinutes()).padStart(2,"0");
+  document.getElementById("hora-real").value = h + ":" + m;
+
+  autoSelectToma(now);
+}
+
+function autoSelectToma(now) {
+  const h = now.getHours();
+  const tomas = ["06:00","09:00","12:00","15:00","18:00","21:00","00:00","03:00"];
+  const horas = [6,9,12,15,18,21,0,3];
+  let closest = 0;
+  let minDiff = Infinity;
+  horas.forEach((th, i) => {
+    let diff = Math.abs(h - th);
+    if (diff > 12) diff = 24 - diff;
+    if (diff < minDiff) { minDiff = diff; closest = i; }
+  });
+  const pills = document.querySelectorAll(".toma-pill");
+  pills[closest].classList.add("selected");
+  tomaEsperada = tomas[closest];
+}
+
+function selectWho(name) {
+  quien = name;
+  document.getElementById("btn-bryan").className = "who-btn" + (name === "Bryan" ? " bryan" : "");
+  document.getElementById("btn-lucia").className = "who-btn" + (name === "Lucía" ? " lucia" : "");
+}
+
+function selectToma(el, hora) {
+  document.querySelectorAll(".toma-pill").forEach(p => p.classList.remove("selected"));
+  el.classList.add("selected");
+  tomaEsperada = hora;
+}
+
+function changeOz(tipo, delta) {
+  if (tipo === "materna") {
+    materna = Math.max(0, Math.round((materna + delta) * 10) / 10);
+    document.getElementById("val-materna").textContent = materna % 1 === 0 ? materna : materna.toFixed(1);
+  } else {
+    formula = Math.max(0, Math.round((formula + delta) * 10) / 10);
+    document.getElementById("val-formula").textContent = formula % 1 === 0 ? formula : formula.toFixed(1);
+  }
+}
+
+function showToast(msg, isError) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast show" + (isError ? " error" : "");
+  setTimeout(() => { t.className = "toast"; }, 3000);
+}
+
+function getFecha() {
+  const now = new Date();
+  return now.getDate().toString().padStart(2,"0") + "/" +
+         (now.getMonth()+1).toString().padStart(2,"0") + "/" +
+         now.getFullYear();
+}
+
+function guardarToma() {
+  if (!quien) { showToast("Selecciona quién da la toma", true); return; }
+  if (!tomaEsperada) { showToast("Selecciona la hora esperada", true); return; }
+
+  const horaReal = document.getElementById("hora-real").value || "--:--";
+  const notas = document.getElementById("notas").value.trim();
+  const btn = document.getElementById("submit-btn");
+
+  btn.disabled = true;
+  btn.textContent = "Guardando...";
+
+  const payload = {
+    fecha: getFecha(),
+    horaEsperada: tomaEsperada,
+    horaReal: horaReal,
+    quien: quien,
+    materna: materna,
+    formula: formula,
+    notas: notas
+  };
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  })
+  .then(() => {
+    showToast("✓ Toma guardada en Google Sheets");
+    historial.unshift(payload);
+    renderHistorial();
+    resetForm();
+  })
+  .catch(() => {
+    showToast("Error al guardar. Revisa tu conexión.", true);
+  })
+  .finally(() => {
+    btn.disabled = false;
+    btn.textContent = "Guardar toma";
+  });
+}
+
+function resetForm() {
+  quien = "";
+  materna = 0;
+  formula = 0;
+  document.getElementById("btn-bryan").className = "who-btn";
+  document.getElementById("btn-lucia").className = "who-btn";
+  document.getElementById("val-materna").textContent = "0";
+  document.getElementById("val-formula").textContent = "0";
+  document.getElementById("notas").value = "";
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,"0");
+  const m = String(now.getMinutes()).padStart(2,"0");
+  document.getElementById("hora-real").value = h + ":" + m;
+}
+
+function renderHistorial() {
+  const div = document.getElementById("historial");
+  if (historial.length === 0) {
+    div.innerHTML = '<p style="font-size:13px;color:#8E8E93;text-align:center;padding:12px 0;">Aún no hay tomas registradas hoy</p>';
+    return;
+  }
+  div.innerHTML = historial.map(t => {
+    const esBryan = t.quien === "Bryan";
+    const avatarBg = esBryan ? "#007AFF" : "#FF2D55";
+    const initials = esBryan ? "BR" : "LU";
+    const ozInfo = [];
+    if (t.materna > 0) ozInfo.push(t.materna + " oz materna");
+    if (t.formula > 0) ozInfo.push(t.formula + " oz fórmula");
+    const ozText = ozInfo.length ? ozInfo.join(" · ") : "Sin cantidad registrada";
+    return `
+      <div class="history-item">
+        <div class="history-avatar" style="background:${avatarBg}">${initials}</div>
+        <div class="history-info">
+          <div class="history-hora">Esperada ${t.horaEsperada} · Real ${t.horaReal}</div>
+          <div class="history-detail">${ozText}</div>
+          ${t.notas ? '<div class="history-detail" style="font-style:italic;margin-top:2px;">' + t.notas + '</div>' : ''}
+        </div>
+      </div>`;
+  }).join("");
+}
+
+init();
+renderHistorial();
+</script>
+</body>
+</html>
